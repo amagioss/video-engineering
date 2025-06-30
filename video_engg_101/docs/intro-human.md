@@ -1,6 +1,6 @@
 ---
 sidebar_position: 2
-title: Introduction by Human
+title: Introduction
 ---
 
 # Introduction

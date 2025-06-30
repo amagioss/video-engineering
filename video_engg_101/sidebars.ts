@@ -3,8 +3,8 @@ import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
 
 const sidebars: SidebarsConfig = {
   tutorialSidebar: [
-    'intro-gpt',
     'intro-human',
+    'intro-gpt',
     {
       type: 'category',
       label: 'Multimedia Basics',
