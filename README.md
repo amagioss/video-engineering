@@ -81,6 +81,5 @@ FFMPEG \- arguably one of the best open source projects ever created. The video 
 # Study Resources
 
 - [https://www.slideshare.net/slideshow/introduction-to-video-compression-13394338/13394338](https://www.slideshare.net/slideshow/introduction-to-video-compression-13394338/13394338)  
-- 
 
 
