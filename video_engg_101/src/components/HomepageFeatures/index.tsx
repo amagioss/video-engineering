@@ -15,7 +15,7 @@ const FeatureList: FeatureItem[] = [
   {
     title: 'Basics',
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
-    link: 'docs/category/basics',
+    link: '/docs/basics/introduction_to_multimedia',
     description: (
       <>
         Learn the basics of video engineering, that describes the building blocks of video.
@@ -24,7 +24,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Advanced',
-    link: 'docs/category/advanced',
+    link: '/docs/advanced/video_compression',
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
@@ -34,11 +34,11 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Amagi',
-    link: 'docs/category/amagi',
+    link: '/docs/streaming/intro',
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
-        Learn about what Amagi is using video engineering for.
+        Learn about streaming video.
       </>
     ),
   },
