@@ -52,6 +52,12 @@ const sidebars: SidebarsConfig = {
         'streaming/intro',
       ],
     },
+    {
+      type: 'html',
+      value:
+        '<span style="border-top: 1px solid var(--ifm-color-gray-500); display: block; margin: 0.5rem 0.5rem 0.25rem 1rem;" />',
+    },
+    'course',
   ],
 };
 
