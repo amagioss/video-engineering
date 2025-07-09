@@ -2,7 +2,7 @@
 Usage: python rgb.py <input_image_path> [<output_image_path>]
 """
 import os
-import sys
+import argparse
 from PIL import Image
 import numpy as np
 
@@ -30,7 +30,7 @@ def load_image_as_rgb_buffer(image_path):
 
     return rgb_array
 
-def extract_and_save_rectangle(image_path, top_left, size, output_path):
+def crop_image(image_path, top_left, size, output_path):
     """
     Extracts a rectangle from an image and saves it as a new image.
     
@@ -60,15 +60,63 @@ def extract_and_save_rectangle(image_path, top_left, size, output_path):
 
     print(f"Saved cropped image to {output_path} with size {cropped_image.size}")
 
-# Example usage
-if __name__ == "__main__test_1":
-    _image_path = "/Users/vinodkumarpr/Downloads/fly_hammer.jpeg"  # Replace with the path to your JPEG file
-    rgb_buffer = load_image_as_rgb_buffer(_image_path)
+def save_rgb_buffer(image_path, output_path):
+    """
+    Loads a JPEG image, converts to RGB, and writes the raw RGB buffer to a file.
 
-    # Accessing a central 100x100 block of the image
-    center_y, center_x = rgb_buffer.shape[0] // 2, rgb_buffer.shape[1] // 2
-    block = rgb_buffer[center_y-50:center_y+50, center_x-50:center_x+50]
-    print("Central 100x100 RGB block shape:", block.shape)
+    Args:
+        image_path (str): Path to input JPEG image.
+        output_path (str): Path to output .rgb file (raw RGB buffer).
+    """
+    # Load image and convert to RGB
+    image = Image.open(image_path).convert("RGB")
+    rgb_array = np.array(image)  # Shape: (H, W, 3)
+
+    # Flatten the array to 1D byte stream
+    raw_bytes = rgb_array.tobytes()
+
+    # Write to file
+    with open(output_path, "wb") as f:
+        f.write(raw_bytes)
+
+    print(f"Saved raw RGB buffer to: {output_path}")
+    print(f"Image resolution: {image.size} (width x height)")
+    print(f"Total bytes written: {len(raw_bytes)} (3 x width x height)")
+
+def load_buffer_from_file(file_path):
+    """
+    Loads raw bytes from a given file.
+
+    Args:
+        file_path (str): Path to the file to read.
+
+    Returns:
+        bytes: The contents of the file as a byte buffer.
+    """
+    try:
+        with open(file_path, "rb") as f:
+            data = f.read()
+            print(f"Loaded {len(data)} bytes from '{file_path}'")
+            return data
+    except FileNotFoundError:
+        print(f"Error: File not found - '{file_path}'")
+        return None
+    except IOError as e:
+        print(f"Error reading file: {e}")
+        return None
+
+def print_hex_bytes(byte_data, columns=16):
+    """
+    Prints the given byte data in hexadecimal format with the specified number of columns.
+
+    Args:
+        byte_data (bytes or bytearray): The input binary data to print.
+        columns (int): Number of bytes per line.
+    """
+    for i in range(0, len(byte_data), columns):
+        line = byte_data[i:i+columns]
+        hex_line = ' '.join(f"{byte:02X}" for byte in line)
+        print(hex_line)
 
 def create_output_path(input_path):
     """
@@ -79,12 +127,56 @@ def create_output_path(input_path):
     """
     return os.path.join(os.path.dirname(input_path), "cropped_image.jpg")
 
+def main():
+    """
+    Main function to parse arguments and execute the appropriate subcommand.
+    """
+    parser = argparse.ArgumentParser(description="RGB image utility with subcommands.")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    # Crop subcommand
+    crop_parser = subparsers.add_parser("crop", help="Crop a rectangle from an image and save it.")
+    crop_parser.add_argument("-i", "--input_image", type=str, help="Path to the input image.")
+    crop_parser.add_argument("-o", "--output_image", type=str,
+                             help="Path to save the cropped image.")
+    crop_parser.add_argument("--x", type=int,
+                             default=100, help="Top-left x coordinate (default: 100)")
+    crop_parser.add_argument("--y", type=int,
+                             default=100, help="Top-left y coordinate (default: 100)")
+    crop_parser.add_argument("--width", type=int,
+                             default=100, help="Width of the rectangle (default: 100)")
+    crop_parser.add_argument("--height", type=int,
+                             default=100, help="Height of the rectangle (default: 100)")
+
+    # RGB subcommand
+    rgb_parser = subparsers.add_parser("rgb",
+                                       help="Extract RGB buffer from image and save as .rgb file.")
+    rgb_parser.add_argument("-i", "--input_image", type=str,
+                            help="Path to the input JPEG image.")
+    rgb_parser.add_argument("-o", "--output_rgb", type=str,
+                            help="Path to save the raw RGB buffer (.rgb file).")
+
+    # Print subcommand
+    print_parser = subparsers.add_parser("print",
+                                         help="Print the raw RGB buffer in hexadecimal format.")
+    print_parser.add_argument("-i", "--input_file", type=str,
+                              help="Path to the .rgb file to print.")
+
+    args = parser.parse_args()
+
+    if args.command == "crop":
+        crop_image(
+            args.input_image,
+            (args.y, args.x),
+            (args.height, args.width),
+            args.output_image,
+        )
+
+    if args.command == "rgb":
+        save_rgb_buffer(args.input_image, args.output_rgb)
+
+    if args.command == "print":
+        print_hex_bytes(load_buffer_from_file(args.input_file))
+
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python rgb.py <input_image_path> [<output_image_path>]")
-        sys.exit(1)
-
-    _image_path = sys.argv[1]
-    _output_path = sys.argv[2] if len(sys.argv) > 2 else create_output_path(_image_path)
-
-    extract_and_save_rectangle(_image_path, (100, 100), (100, 100), _output_path)
+    main()
