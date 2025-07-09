@@ -5,6 +5,7 @@ import os
 import argparse
 from PIL import Image
 import numpy as np
+import math
 
 def load_image_as_rgb_buffer(image_path):
     """
@@ -82,6 +83,50 @@ def save_rgb_buffer(image_path, output_path):
     print(f"Saved raw RGB buffer to: {output_path}")
     print(f"Image resolution: {image.size} (width x height)")
     print(f"Total bytes written: {len(raw_bytes)} (3 x width x height)")
+
+
+def replace_last_pixels(image_path, output_path, replacement_color=(255, 255, 255)):
+    """
+    Loads an image and replaces the bottom-right 2x2 pixels with a solid color using basic array manipulation.
+    Args:
+        image_path (str): Path to input image.
+        output_path (str): Path to save modified image.
+        replacement_color (tuple): (R, G, B) color to apply to the 2x2 block.
+    """
+    # Open image and convert to RGB
+    with open(image_path, "rb") as f:
+        pixel_bytes = f.read()
+
+    print("Type of pixel_bytes:", type(pixel_bytes))
+    print("Length of pixel_bytes:", len(pixel_bytes))
+    print("First 10 bytes:", pixel_bytes[:10])
+
+    width = int(math.sqrt(len(pixel_bytes) // 3))
+    height = width
+
+    pixel_bytes = list(pixel_bytes)
+
+    row_stride = width * 3
+    channels = 3
+
+    replace_width = 100
+    replace_height = 100
+    # Modify last 2×2 pixels (bottom-right)
+    for y_offset in range(replace_height):
+        for x_offset in range(replace_width):
+            x = width - replace_width + x_offset
+            y = height - replace_height + y_offset
+
+            idx = y * row_stride + x * channels
+            for i in range(3):
+                pixel_bytes[idx + i] = replacement_color[i]
+
+    # Convert modified list back to bytes and create new image
+    modified_bytes = bytes(pixel_bytes)
+    modified_img = Image.frombytes("RGB", (width, height), modified_bytes)
+    modified_img.save(output_path)
+    print(f"Saved image with modified 2x2 pixels at: {output_path}")
+
 
 def load_buffer_from_file(file_path):
     """
@@ -162,7 +207,16 @@ def main():
     print_parser.add_argument("-i", "--input_file", type=str,
                               help="Path to the .rgb file to print.")
 
+    # Replace subcommand
+    replace_parser = subparsers.add_parser("replace",
+                                          help="Replace the last 2x2 pixels with a solid color.")
+    replace_parser.add_argument("-i", "--input_image", type=str,
+                                help="Path to the input image.")
+    replace_parser.add_argument("-o", "--output_image", type=str,
+                                help="Path to save the modified image.")
+
     args = parser.parse_args()
+
 
     if args.command == "crop":
         crop_image(
@@ -177,6 +231,9 @@ def main():
 
     if args.command == "print":
         print_hex_bytes(load_buffer_from_file(args.input_file))
+
+    if args.command == "replace":
+        replace_last_pixels(args.input_image, args.output_image)
 
 if __name__ == "__main__":
     main()
