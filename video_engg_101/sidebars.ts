@@ -7,17 +7,28 @@ const sidebars: SidebarsConfig = {
     'intro-gpt',
     {
       type: 'category',
+      label: 'Setup',
+      items: [
+        'setup/linux',
+        'setup/macos',
+        'setup/test_content',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Multimedia Basics',
       items: [
-        {
-          type: 'category',
-          label: 'Introduction To Multimedia',
-          link: {type: 'doc', id: 'basics/introduction_to_multimedia'},
-          items: ['basics/color_space'],
-        },
-        'basics/resolution',
-        'basics/frame_rates',
-        'basics/interlaced',
+        'basics/introduction_to_multimedia',
+        'basics/color_space',
+        'basics/assignments',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Compression',
+      items: [
+        'compression/video_Compression',
+        'compression/assignments',
       ],
     },
     {
