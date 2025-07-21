@@ -47,12 +47,6 @@ Key Concepts:
 
 Representation in python: Numpy array of shape (n, 2) where n is the number of samples. Each number in the array is a float32 with values between -1 and 1.
 
-### Assignments
-
-1. Write a python code to read video frames and implement (255-v) and visualize first 5 seconds of video.
-
-2. Write a small python code to generate a sine wave of 440 Hz and play it.
-
 
 ## Raw Bitrate
 
@@ -129,8 +123,47 @@ Why 16 bits per sample for audio where as 8 bits per pixel for video?
     Most sensitive region (fovea) is a small part of the retina; peripheral vision has lower color and brightness resolution.
 
 
+### Example videos
+
+- https://www.youtube.com/watch?v=Q-KPrxjNojI 0-1000 Nits brightness
 
 
+### Example python code to generate different dB tone
 
+```python
+import numpy as np
+from scipy.io.wavfile import write
+import os
+
+# Parameters
+sample_rate = 44100  # 44.1 kHz sample rate
+duration = 1.0       # seconds
+frequency = 1000     # 1 kHz tone
+
+# Output directory
+os.makedirs("sine_tones", exist_ok=True)
+
+# Generate time axis
+t = np.linspace(0, duration, int(sample_rate * duration), endpoint=False)
+
+# Reference amplitude for 0 dBFS
+ref_amplitude = 0.999  # Max just under 1.0 to avoid clipping
+
+# Generate tones from -90 dB to 0 dB
+for db in range(-90, 1):  # Inclusive of 0 dB
+    # Convert dB to linear amplitude scale
+    amplitude = ref_amplitude * (10 ** (db / 20))
+    waveform = amplitude * np.sin(2 * np.pi * frequency * t)
+
+    # Convert to 16-bit PCM format
+    waveform_int16 = np.int16(waveform * 32767)
+
+    # Save to WAV file
+    filename = f"sine_tones/sine_1kHz_{db}dB.wav"
+    write(filename, sample_rate, waveform_int16)
+
+print("Generated sine tones from -90 dB to 0 dB in ./sine_tones")
+
+```
 
 

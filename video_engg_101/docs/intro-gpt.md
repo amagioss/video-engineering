@@ -92,6 +92,7 @@ This document serves as a primer for learning the core concepts, tools, and work
 - **GStreamer**: Modular multimedia pipeline
 - **OBS Studio**: Live streaming and recording software
 - **Wirecast / vMix**: Live video production tools
+- **Audacity**: Visualize audio and be able to do some frequency analysis
 
 ---
 
