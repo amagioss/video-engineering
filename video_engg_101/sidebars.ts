@@ -29,17 +29,8 @@ const sidebars: SidebarsConfig = {
       items: [
         'compression/video_Compression',
         'compression/assignments',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Advanced',
-      items: [
-        'advanced/video_compression',
-        'advanced/audio_compression',
         'advanced/codecs',
         'advanced/packetization',
-        'advanced/mpeg_ts',
       ],
     },
     {
