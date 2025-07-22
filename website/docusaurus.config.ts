@@ -11,7 +11,7 @@ const config: Config = {
   tagline: 'Learn video engineering',
   favicon: 'img/favicon.ico',
 
-  url: 'https://dev.amagi.com/video-engineering',
+  url: 'https://dev.amagi.com',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/video-engineering/',
