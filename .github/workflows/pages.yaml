@@ -33,14 +33,13 @@ jobs:
         run: |
           npm -C website ci
           npm -C website run build
-          cp -r website/build/* pages/
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: pages
+          path: website/build
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
