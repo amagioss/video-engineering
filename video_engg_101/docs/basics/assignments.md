@@ -10,7 +10,11 @@ generate a 1280x720 VIBGYOR pattern.
 
 3. Play the dumped RGB file at different framerates.
 
-4. Write a small python code to generate a sine wave of 440 Hz and play it.
+4. Write a python code to generate a sine wave of 440 Hz and play it.
+    How would you test if the generated sine wave is correct?
+
+5. Produce taanpuraa Sa 440Hz, 220Hz and play.
+
 
 ## FAQs
 
