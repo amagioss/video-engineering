@@ -7,7 +7,7 @@ import rehypeKatex from 'rehype-katex';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'Video Engg by Amagi',
+  title: 'Video Engineering by Amagi',
   tagline: 'Learn video engineering',
   favicon: 'img/favicon.ico',
 
