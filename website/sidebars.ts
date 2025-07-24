@@ -9,8 +9,7 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: 'Setup',
       items: [
-        'setup/linux',
-        'setup/macos',
+        'setup/setup',
         'setup/test_content',
       ],
     },
