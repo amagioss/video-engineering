@@ -13,7 +13,10 @@ generate a 1280x720 VIBGYOR pattern.
 4. Write a python code to generate a sine wave of 440 Hz and play it.
     How would you test if the generated sine wave is correct?
 
-5. Produce taanpuraa Sa 440Hz, 220Hz and play.
+5. Produce tanpura Sa 440Hz, 220Hz and play.
+
+6. Change the sampling rate of an extracted audio file to 16KHz and play it. Why 
+would you want to do this ever?
 
 
 ## FAQs

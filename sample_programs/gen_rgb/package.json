@@ -1,0 +1,12 @@
+{
+  "type": "module",
+  "scripts": {
+    "dev": "tsx gen_rgb.ts"
+  },
+  "dependencies": {
+    "@types/node": "^24.0.15",
+    "ts-node": "^10.9.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.0.0"
+  }
+}

@@ -138,7 +138,7 @@ import os
 # Parameters
 sample_rate = 44100  # 44.1 kHz sample rate
 duration = 1.0       # seconds
-frequency = 1000     # 1 kHz tone
+frequency = 1500     # 1.5 kHz tone
 
 # Output directory
 os.makedirs("sine_tones", exist_ok=True)

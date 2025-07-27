@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrolling Ticker with Transparency</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 1280px;
+            height: 720px;
+            background: transparent;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            position: relative;
+        }
+
+        .ticker-container {
+            position: absolute;
+            bottom: 80px;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(135deg, 
+                rgba(0, 123, 255, 0.9) 0%, 
+                rgba(40, 167, 69, 0.9) 100%);
+            border-top: 4px solid rgba(255, 255, 255, 0.8);
+            border-bottom: 4px solid rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3),
+                        0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .ticker-label {
+            background: rgba(13, 110, 253, 0.95);
+            color: white;
+            padding: 0 40px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            font-size: 32px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.4);
+            z-index: 2;
+            position: relative;
+        }
+
+        .ticker-content {
+            flex: 1;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ticker-text {
+            position: absolute;
+            white-space: nowrap;
+            height: 100%;
+            line-height: 120px;
+            font-size: 26px;
+            font-weight: 600;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            animation: scroll-left 80s linear infinite;
+            left: 100%;
+            font-family: 'Arial', sans-serif;
+        }
+
+        @keyframes scroll-left {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        .green { color: #00ff88; }
+        .red { color: #ff4757; }
+        .yellow { color: #ffd700; }
+    </style>
+</head>
+<body>
+    <!-- Bottom ticker - ONLY visible element -->
+    <div class="ticker-container">
+        <div class="ticker-label">LIVE STOCKS</div>
+        <div class="ticker-content">
+            <div class="ticker-text">
+                AAPL $175.84 <span class="green">+2.31 (+1.33%)</span> &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; GOOGL $2,847.63 <span class="red">-15.42 (-0.54%)</span> &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; MSFT $378.85 <span class="green">+4.12 (+1.10%)</span> &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; AMZN $3,372.20 <span class="green">+28.45 (+0.85%)</span> &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; TSLA $208.88 <span class="red">-3.67 (-1.73%)</span> &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; META $331.26 <span class="green">+6.84 (+2.11%)</span> &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; NVDA $875.28 <span class="green">+12.45 (+1.44%)</span> &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; NFLX $445.73 <span class="yellow">+0.05 (+0.01%)</span> &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; CRM $264.91 <span class="red">-2.18 (-0.81%)</span> &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; AMD $153.76 <span class="green">+5.23 (+3.52%)</span> &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; AAPL $175.84 <span class="green">+2.31 (+1.33%)</span> &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; GOOGL $2,847.63 <span class="red">-15.42 (-0.54%)</span> &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; MSFT $378.85 <span class="green">+4.12 (+1.10%)</span> &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; AMZN $3,372.20 <span class="green">+28.45 (+0.85%)</span> &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; TSLA $208.88 <span class="red">-3.67 (-1.73%)</span> &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; META $331.26 <span class="green">+6.84 (+2.11%)</span> &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; NVDA $875.28 <span class="green">+12.45 (+1.44%)</span> &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; NFLX $445.73 <span class="yellow">+0.05 (+0.01%)</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Stock ticker animation ready for capture at 1280x720 with full alpha transparency');
+        });
+    </script>
+</body>
+</html> 

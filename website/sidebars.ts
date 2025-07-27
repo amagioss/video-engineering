@@ -19,6 +19,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'basics/introduction_to_multimedia',
         'basics/color_space',
+        'basics/ffmpeg_commands',
         'basics/assignments',
       ],
     },
