@@ -17,9 +17,11 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: 'Multimedia Basics',
       items: [
+        'basics/goals',
         'basics/introduction_to_multimedia',
         'basics/color_space',
         'basics/ffmpeg_commands',
+        'basics/ntsc_pal_stories',
         'basics/assignments',
       ],
     },

@@ -18,6 +18,7 @@ generate a 1280x720 VIBGYOR pattern.
 6. Change the sampling rate of an extracted audio file to 16KHz and play it. Why 
 would you want to do this ever?
 
+7. Convert a HTML5 page to a video file. Overlay the generated video on a base video.
 
 ## FAQs
 

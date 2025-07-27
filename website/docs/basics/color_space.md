@@ -15,9 +15,22 @@ title: Color Space
 
 # YUV space
 
+Components of YUV
+
+- **Y (Luminance or Luma)**
+        Represents brightness or grayscale information.
+
+        Derived from a weighted sum of the RGB components, with more emphasis on green, reflecting the human eye’s sensitivity to it.
+
+- **U (Chrominance – Blue Projection)**
+        Represents the difference between the blue component and the luma (B − Y).
+
+- **V (Chrominance – Red Projection)**
+        Represents the difference between the red component and the luma (R − Y).
+
+The video encoders and decoders use YUV space frame representation to compress the video.
+
 Equations for RGB to YUV space transformation
-
-
 Y' range: [16, 235]
 
 Cb and Cr range: [16, 240]

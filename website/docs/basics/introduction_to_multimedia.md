@@ -15,6 +15,10 @@ Multimedia is used in a variety of contexts, including:
 
 All modern video and audio processing is done in digital domain. A video processing signal chain is about color space conversions along the way. These conversions have to be done at the pixel rate, for example, consider HD resolution which is 1920 × 1080 with 60 fps (frames per second). i.e. 1920 × 1080 × 60 pixels are coming in each second, which means 124.4 million pixels in each second.  Any operation that needs to be done on the bits of one pixel must be done so fast that the same operation can be done on 124.4 million pixels in the space of one second. In other words the frequency is 124.4 Mhz. In reality this is around 148 Mhz since we must account for the timing information in each video frame. A color plane refers to the bits associated with each color R, G or B, for example. Let’s say 8 bits for each color plane and let’s assume simple RGB color planes. Going back to the processing speed, each pixel’s 24 bits have to be manipulated at a frequency of 148 Mhz. If you use an 8-bit DSP, which can manipulate 8 bits, then you have to run this DSP at 3 × 148 Mhz to keep up with the pixels coming in. In practice HD video manipulation would normally be done on a 32-bit DSP or processor. This topic looks into the signal processing of video and audio that form part of a video signal. 
 
+### Flipbook Analogy
+
+Checkout [FLipbook](https://www.youtube.com/watch?v=hio2CGVLihY)
+
 ### Video
 
 Key Concepts:
@@ -28,12 +32,11 @@ Key Concepts:
   - 240p: 320x240
   - 144p: 176x144
 - **Bitrate**: The amount of data used to represent the video.
+- **Pixel(Picture element)**: A pixel is the smallest unit of a digital image. It is a dot on the screen that represents a specific color and brightness.
 
 Images are played on screen at FPS that gives the illusion of motion.
 
-Checkout [FLipbook](https://www.youtube.com/watch?v=hio2CGVLihY)
-
-Representation in python: Numpy array of shape (n, width, height, 3) where n is the number of frames stacked. Each number in the array is a 
+Representation in python: Numpy array of shape **(n, width, height, 3)** where n is the number of frames stacked. Each number in the array is a 
 uint8 with values between 0 and 255.
 
 ### Audio
@@ -45,8 +48,10 @@ Key Concepts:
 - **Bits per sample**: The number of bits used to represent each sample. Typically 16, 24, 32.
 - **Channels**: The number of audio channels. Typically 1 for mono and 2 for stereo. 6 for 5.1 surround sound.
 
-Representation in python: Numpy array of shape (n, 2) where n is the number of samples. Each number in the array is a float32 with values between -1 and 1.
+Representation in python: Numpy array of shape **(n, 2)** where n is the number of samples 
+and 2 is the number of channels(stereo). Each number in the array is a float32 with values between -1 and 1.
 
+Sampling Theorem: https://www.youtube.com/watch?v=FcXZ28BX-xE
 
 ## Raw Bitrate
 
