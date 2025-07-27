@@ -7,17 +7,12 @@ type Point = {
 
 let frame_num = 0
 
-console.log(Object.getOwnPropertyDescriptors(Object.getPrototypeOf(Buffer.alloc(10))));
-
-process.exit(0);
-
 function generate_rgb_frame(w: number, h: number, p: Point, direction: Point): [Buffer, Point, Point] {
     const buf = Buffer.alloc(w*h*3);
 
     // Memset allocated buffer to 0
     buf.fill(0);
 
-    console.log(`Frame ${frame_num}`);
     frame_num++;
 
     const min_w_h = (w < h) ? w : h;
@@ -76,9 +71,9 @@ ffplay.on('error', (err) => {
     process.exit(1);
 });
 
-ffplay.stderr.on('data', (data) => {
+/*ffplay.stderr.on('data', (data) => {
     console.error('ffplay stderr:', data.toString());
-});
+});*/
 
 ffplay.on('close', (code) => {
     console.log(`ffplay process exited with code ${code}`);
