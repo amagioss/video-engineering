@@ -110,10 +110,10 @@ class HTML5ToVideoConverter {
       await this.page.goto(fileUrl, { waitUntil: 'networkidle0' });
 
       // Wait for any animations or dynamic content to load - reduced for speed
-      await this.page.waitForTimeout(500);
+      await new Promise(resolve => setTimeout(resolve, 500));
 
-      // Use screenshot method for true alpha preservation
-      console.log('Starting screenshot capture with true alpha preservation...');
+      // Use screenshot method for alpha preservation
+      console.log('Starting screenshot capture with alpha preservation...');
       await this.captureWithSlowBrowser(outputFile, width, height, duration, fps);
 
       // Close the page
@@ -175,34 +175,27 @@ class HTML5ToVideoConverter {
           // Convert base64 to RGBA buffer
           const imageBuffer = Buffer.from(frame.data, 'base64');
           
-          // Use sharp for fast conversion if available
-          let rgbaBuffer: Buffer;
-          try {
-            const sharp = require('sharp');
-            rgbaBuffer = await sharp(imageBuffer)
-              .ensureAlpha()
-              .raw()
-              .toBuffer();
-          } catch {
-            // Fallback: decode in browser
-            const rgbaData = await this.page!.evaluate((base64Data: string, w: number, h: number) => {
-              return new Promise<number[]>((resolve) => {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d')!;
-                canvas.width = w;
-                canvas.height = h;
+          // Convert to RGBA using browser with alpha preservation
+          const rgbaData = await this.page!.evaluate((base64Data: string, w: number, h: number) => {
+            return new Promise<number[]>((resolve) => {
+              const canvas = document.createElement('canvas');
+              const ctx = canvas.getContext('2d', { 
+                alpha: true,
+                willReadFrequently: true 
+              })!;
+              canvas.width = w;
+              canvas.height = h;
 
-                const img = new Image();
-                img.onload = () => {
-                  ctx.drawImage(img, 0, 0);
-                  const imageData = ctx.getImageData(0, 0, w, h);
-                  resolve(Array.from(imageData.data));
-                };
-                img.src = 'data:image/png;base64,' + base64Data;
-              });
-            }, frame.data, width, height);
-            rgbaBuffer = Buffer.from(rgbaData);
-          }
+              const img = new Image();
+              img.onload = () => {
+                ctx.drawImage(img, 0, 0);
+                const imageData = ctx.getImageData(0, 0, w, h);
+                resolve(Array.from(imageData.data));
+              };
+              img.src = 'data:image/png;base64,' + base64Data;
+            });
+          }, frame.data, width, height);
+          const rgbaBuffer = Buffer.from(rgbaData);
 
           // Add frame to buffer with timestamp
           frameBuffer.push({ data: rgbaBuffer, timestamp: frameReceiveTime });
@@ -356,7 +349,7 @@ class HTML5ToVideoConverter {
   }
 
   private startFFmpegProcess(outputFile: string, width: number, height: number, fps: number): ChildProcess {
-    console.log('Starting FFmpeg process for direct RGBA input...');
+    console.log('Starting optimized FFmpeg process for maximum speed...');
     
     const ffmpeg = spawn('ffmpeg', [
       '-f', 'rawvideo',
@@ -367,11 +360,14 @@ class HTML5ToVideoConverter {
       '-c:v', 'prores_ks',
       '-profile:v', '4444',
       '-pix_fmt', 'yuva444p10le',
-      '-preset', 'ultrafast', // Fastest encoding preset
-      '-tune', 'fastdecode', // Optimize for fast decoding
-      '-threads', '0', // Use all available CPU cores
-      '-thread_type', 'frame+slice', // Enable both frame and slice threading
-      '-slices', '8', // Use multiple slices for parallel encoding
+      '-preset', 'ultrafast',
+      '-threads', '0', // Use all CPU cores
+      '-thread_type', 'frame+slice', // Enable parallel encoding
+      '-slices', '8', // Multiple slices for parallel processing
+      '-bf', '0', // No B-frames for faster encoding
+      '-g', fps.toString(), // GOP size = fps for faster seeking
+      '-bufsize', '64M', // Large buffer for smoother encoding
+      '-maxrate', '200M', // High bitrate ceiling for quality
       '-y', // Overwrite output file
       outputFile
     ], {
@@ -416,19 +412,24 @@ class HTML5ToVideoConverter {
       throw new Error('Page or CDP session not available');
     }
 
-    console.log(`Optimizing browser for precise ${fps} FPS capture...`);
-    
-    // Don't throttle CPU - let browser run at normal speed
-    // We'll control timing precisely instead
+    console.log(`Optimizing capture for high-speed ${fps} FPS processing...`);
     
     const totalFrames = duration * fps;
     const frameInterval = 1000 / fps;
 
-    console.log(`Capturing ${totalFrames} frames at precise ${fps} FPS intervals...`);
+    console.log(`Capturing ${totalFrames} frames with performance optimizations...`);
 
     const ffmpeg = this.startFFmpegProcess(outputFile, width, height, fps);
     const frameTimings: number[] = [];
     const captureStartTime = Date.now();
+    
+    // Pre-allocate buffer pool for memory efficiency
+    const bufferPool: Buffer[] = [];
+    const poolSize = 4; // Keep 4 buffers in pool
+    for (let i = 0; i < poolSize; i++) {
+      bufferPool.push(Buffer.alloc(width * height * 4)); // RGBA
+    }
+    let poolIndex = 0;
 
     try {
       const startTime = Date.now();
@@ -437,7 +438,18 @@ class HTML5ToVideoConverter {
       // Pre-allocate buffer for better memory performance
       const expectedBufferSize = width * height * 4; // RGBA = 4 bytes per pixel
       
+      // Ensure page is ready before starting capture
+      try {
+        await this.page.waitForFunction('document.readyState === "complete"', { timeout: 5000 });
+        console.log('Page loaded, starting frame capture loop...');
+      } catch (error) {
+        console.log('Page load timeout, proceeding anyway...');
+      }
+      
       for (let frameNum = 0; frameNum < totalFrames; frameNum++) {
+        if (frameNum === 0) {
+          console.log('Capturing first frame...');
+        }
         // Calculate exact time when this frame should be captured, compensating for processing delays
         const targetTime = startTime + (frameNum * frameInterval) + cumulativeProcessingTime;
         const currentTime = Date.now();
@@ -450,60 +462,85 @@ class HTML5ToVideoConverter {
         
         const frameStartTime = Date.now();
         
-        // Take optimized screenshot with alpha preservation - optimized for speed
-        const screenshot = await this.page.screenshot({
-          type: 'png',
-          omitBackground: true,
-          fullPage: false,
-          encoding: 'binary',
-          clip: { x: 0, y: 0, width: width, height: height }
-        }) as Buffer;
+        if (frameNum === 0) {
+          console.log('Taking first screenshot...');
+        }
+        
+        // Optimized PNG screenshot for speed
+        const screenshot = await Promise.race([
+          this.page.screenshot({
+            type: 'png',
+            omitBackground: true,
+            encoding: 'binary'
+          }) as Promise<Buffer>,
+          new Promise<never>((_, reject) => 
+            setTimeout(() => reject(new Error('Screenshot timeout')), 3000)
+          )
+        ]);
+        
+        if (frameNum === 0) {
+          console.log('First screenshot completed, converting to RGBA...');
+        }
         
         const screenshotEndTime = Date.now();
         const screenshotTime = screenshotEndTime - frameStartTime;
 
-        // Ultra-fast Sharp conversion to RGBA - optimized for speed
+        if (frameNum === 0) {
+          console.log('Converting first frame to RGBA...');
+        }
+        
+        // Ultra-fast Sharp conversion to RGBA - 10x+ faster than browser
         let rgbaBuffer: Buffer;
         try {
           const sharp = require('sharp');
-          rgbaBuffer = await sharp(screenshot, { 
-            failOnError: false,
-            unlimited: true,
-            sequentialRead: true,
-            pages: 1, // Only process first page for speed
-            density: 72, // Lower DPI for speed
-          })
+          rgbaBuffer = await sharp(screenshot)
             .ensureAlpha()
             .raw()
-            .toBuffer({ resolveWithObject: false });
-        } catch {
-          // Browser fallback - optimized for speed
-          const rgbaData = await this.page.evaluate((pngBase64: string, w: number, h: number) => {
+            .toBuffer();
+        } catch (error) {
+          console.warn('Sharp not available, falling back to browser conversion');
+          // Browser fallback (much slower)
+          const rgbaData = await this.page.evaluate((pngBase64: string) => {
             const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d', { 
-              alpha: true,
-              willReadFrequently: true,
-              desynchronized: true 
-            }) as CanvasRenderingContext2D;
-            canvas.width = w;
-            canvas.height = h;
+            const ctx = canvas.getContext('2d', { alpha: true }) as CanvasRenderingContext2D;
+            canvas.width = 1280;
+            canvas.height = 720;
 
-            return new Promise<Uint8ClampedArray>((resolve) => {
+            return new Promise<number[]>((resolve) => {
               const img = new Image();
               img.onload = () => {
                 ctx.drawImage(img, 0, 0);
-                const imageData = ctx.getImageData(0, 0, w, h);
-                resolve(imageData.data); // Return Uint8ClampedArray directly
+                const imageData = ctx.getImageData(0, 0, 1280, 720);
+                resolve(Array.from(imageData.data));
               };
               img.src = 'data:image/png;base64,' + pngBase64;
             });
-          }, screenshot.toString('base64'), width, height);
+          }, screenshot.toString('base64'));
           rgbaBuffer = Buffer.from(rgbaData);
         }
 
-        // Write directly to ffmpeg
+        if (frameNum === 0) {
+          console.log('First frame RGBA conversion completed, writing to FFmpeg...');
+        }
+
+        // Reuse buffer from pool for memory efficiency
+        const poolBuffer = bufferPool[poolIndex];
+        rgbaBuffer.copy(poolBuffer, 0, 0, Math.min(rgbaBuffer.length, poolBuffer.length));
+        poolIndex = (poolIndex + 1) % poolSize;
+
+        // Write directly to ffmpeg with error handling
         if (ffmpeg.stdin && !ffmpeg.stdin.destroyed) {
-          ffmpeg.stdin.write(rgbaBuffer);
+          const writeSuccess = ffmpeg.stdin.write(poolBuffer.slice(0, rgbaBuffer.length));
+          if (!writeSuccess) {
+            // Handle backpressure
+            await new Promise(resolve => ffmpeg.stdin!.once('drain', resolve));
+          }
+          if (frameNum === 0) {
+            console.log('First frame written to FFmpeg successfully');
+          }
+        } else {
+          console.error('FFmpeg stdin not available!');
+          break;
         }
 
         const frameEndTime = Date.now();
