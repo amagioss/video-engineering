@@ -70,7 +70,14 @@ Raw Audio bitrate = Sampling Rate * Bits per sample * Channels
 For example, a 48000 Hz audio at 16 bits per sample with 2 channels has a raw bitrate of 48000 * 16 * 2 = 1.536Mbps
 
 
-## Physics of perception and human sensory evolution
+## Science of perception and human sensory evolution
+
+Two subjects of interest:
+
+- Psycho-visual studies: "Psycho-visual" refers to the study of how the human visual system perceives and interprets visual information
+- Psycho-auditory studies: Psychoacoustics is the study of how humans perceive sound. It explores the relationship between the physical properties of sound and the psychological and physiological responses that humans experience when hearing.
+
+Color, as we perceive it, is the visual experience resulting from the way our eyes and brain process different wavelengths of light. Objects don't inherently possess color; instead, they absorb and reflect light of varying wavelengths, which our eyes and brains then interpret as specific colors
 
 Why 16 bits per sample for audio where as 8 bits per pixel for video?
 
