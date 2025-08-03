@@ -34,3 +34,7 @@ brew install ffplay
 
 - https://www.videolan.org/vlc/
 - https://www.audacityteam.org/download/
+- Windows MediaInfo: https://mediaarea.net/en/MediaInfo/Download/Windows
+- Ubuntu MediaInfo: https://mediaarea.net/en/MediaInfo/Download/Linux
+- Macos MediaInfo: https://mediaarea.net/en/MediaInfo/Download/Mac_OS
+- Media Player mpv: https://mpv.io/installation/
