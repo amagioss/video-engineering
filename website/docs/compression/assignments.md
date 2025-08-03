@@ -8,8 +8,8 @@ How do I compare against the original image and output of png and jpeg?
 
 2. Calculate entropy of a gray image buffer. 
 
-3. Try running https://github.com/mVirtuoso21/JPEG-Image-Compressor and understand the
-principles behind image compression.
+3. Try running https://github.com/misingnoglic/jpeg_compresser/tree/master and understand the
+principles behind image compression. Try doing a simple dct, quantization and run length encoding.
 
 4. Given 2 consecutive frames of a video, find the best neighboring block in reference, subtract and reconstruct.
 

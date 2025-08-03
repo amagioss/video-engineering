@@ -30,6 +30,8 @@ const sidebars: SidebarsConfig = {
       label: 'Compression',
       items: [
         'compression/video_Compression',
+        'compression/audio_compression',
+        'compression/ffmpeg_commands',
         'compression/assignments',
         'advanced/codecs',
         'advanced/packetization',
