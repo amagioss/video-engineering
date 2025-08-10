@@ -42,6 +42,8 @@ const sidebars: SidebarsConfig = {
       label: 'Video Containers',
       items: [
         'containers/intro',
+        'containers/mpegts-presentation',
+        'containers/mp4-format',
       ],
     },
     {
