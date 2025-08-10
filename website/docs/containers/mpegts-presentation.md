@@ -189,8 +189,8 @@ This presentation covers:
 - [HLS Streaming Guide](../streaming/intro.md) - HTTP Live Streaming implementation
 
 ### Technical References:
-- [MPEG-TS Introduction PDF](../../references/mpegts-introduction.pdf) - Comprehensive technical introduction to MPEG Transport Stream fundamentals, packet structure, and multiplexing concepts
-- [MPEG-2 Overview by Sarginson](../../references/sarginson_mpeg2_overview.pdf) - Detailed technical overview of MPEG-2 systems, including transport stream specifications and broadcasting standards
+- [MPEG-TS Introduction PDF](pdfs/mpegts-introduction.pdf) - Comprehensive technical introduction to MPEG Transport Stream fundamentals, packet structure, and multiplexing concepts
+- [MPEG-2 Overview by Sarginson](pdfs/sarginson_mpeg2_overview.pdf) - Detailed technical overview of MPEG-2 systems, including transport stream specifications and broadcasting standards
 
 ---
 
