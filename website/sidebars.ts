@@ -58,6 +58,7 @@ const sidebars: SidebarsConfig = {
       label: 'Streaming',
       items: [
         'streaming/intro',
+        'streaming/simple_media_streaming',
       ],
     },
     {
