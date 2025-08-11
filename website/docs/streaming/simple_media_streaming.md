@@ -1,4 +1,4 @@
-# Minimal media streaming example
+# Minimal HLS streaming example
 
 In this page we give steps to create a simple streaming server. 
 
