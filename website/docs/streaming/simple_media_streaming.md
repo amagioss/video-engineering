@@ -249,6 +249,6 @@ that's it:
 1. run the `ffmpeg` command,
 2. `cd hls_out && python3 -m http.server 8000`,
 3. Copy the html section into a file called `play.html` and save it in the same directory as `hls_out`.
-4. open `http://localhost:8000/play.html`, enter a URL, and press "Load Video". 🎬
+4. open `http://localhost:8000/player.html`, enter a URL, and press "Load Video". 🎬
 
 (If you hit MIME type issues for `.m3u8`/`.ts` on some systems, serve with a real web server like nginx, or add MIME mappings. But `http.server` usually works fine for quick local tests.)
