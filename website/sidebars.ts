@@ -59,6 +59,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'streaming/intro',
         'streaming/simple_media_streaming',
+        'streaming/srt_streaming',
       ],
     },
     {
