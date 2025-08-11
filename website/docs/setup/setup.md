@@ -19,7 +19,7 @@ ffplay -version
 
 ## Windows Ffmpeg Install
 
-For windows download https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip and extract the zip file.
+For windows download https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z and extract the zip file.
 Download and install ffmpeg from https://ffmpeg.org/download.html. 
 
 ## Macos Ffmpeg Install
