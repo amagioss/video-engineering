@@ -30,6 +30,7 @@ const sidebars: SidebarsConfig = {
       label: 'Compression',
       items: [
         'compression/video_Compression',
+        'compression/huffman_encoding',
         'compression/audio_compression',
         'compression/ffmpeg_commands',
         'compression/assignments',
@@ -58,6 +59,8 @@ const sidebars: SidebarsConfig = {
       label: 'Streaming',
       items: [
         'streaming/intro',
+        'streaming/hls',
+        'streaming/srt',
         'streaming/simple_media_streaming',
         'streaming/srt_streaming',
       ],
