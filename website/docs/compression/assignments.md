@@ -16,3 +16,11 @@ How do I compare against the original image and output of png and jpeg?
 
 6. Explore https://github.com/swesterfeld/audiowmark
 
+7. Visualize motion vectors in a given video.
+
+```bash
+ffmpeg -flags2 +export_mvs -i /files/v/small_bunny_1080p_30fps.mp4 -vf codecview=mv=pf+bf+bb /tmp/small_bunny_1080p_30fps_vis_mv.mp4
+```
+
+8. Try out examples from https://github.com/leandromoreira/digital_video_introduction/blob/master/encoding_pratical_examples.md
+

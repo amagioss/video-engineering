@@ -32,7 +32,6 @@ const sidebars: SidebarsConfig = {
         'compression/video_Compression',
         'compression/huffman_encoding',
         'compression/audio_compression',
-        'compression/ffmpeg_commands',
         'compression/assignments',
         'advanced/codecs',
         'advanced/packetization',
