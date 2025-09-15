@@ -19,11 +19,11 @@ graph LR
 
 Shannon's theorem:
 
-Shannon’s source coding theorem (verbal statement). N i.i.d. ran-
-dom variables each with entropy H(X) can be compressed into more
+Shannon’s source coding theorem (verbal statement). N i.i.d. random
+ variables each with entropy H(X) can be compressed into more
 than N H(X) bits with negligible risk of information loss, as N → ∞;
-conversely if they are compressed into fewer than N H(X) bits it is vir-
-tually certain that information will be lost.
+conversely if they are compressed into fewer than N H(X) bits it is 
+virtually certain that information will be lost.
 
 
 ## Video Compression
