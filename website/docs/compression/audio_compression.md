@@ -69,6 +69,9 @@ threshold is computed using rules known from psychoacoustics.
 This is called the perceptual model
 of the perceptual encoding system.
 
+![Perceptual model](./audio_masking.png)
+
+
 - **Quantization and coding**:
 The spectral components are quantized and coded
 with the aim of keeping the noise, which is introduced
@@ -89,3 +92,4 @@ e.g. bit allocation information.
 # References
 
 1. https://www.ee.columbia.edu/~dpwe/papers/Brand99-mp3.pdf
+2. Compression Notebook: https://github.com/amagioss/video-engineering/blob/main/sample_programs/audio_compression/audio_psychoacoustic_compression.ipynb
