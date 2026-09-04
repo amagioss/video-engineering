@@ -31,6 +31,8 @@ const sidebars: SidebarsConfig = {
       items: [
         'compression/video_Compression',
         'compression/huffman_encoding',
+        'compression/shannon_coding_theorem',
+        'compression/arithmetic_encoding',
         'compression/quality_metrics',
         'compression/audio_compression',
         'compression/assignments',
