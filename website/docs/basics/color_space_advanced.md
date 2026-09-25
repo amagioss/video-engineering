@@ -78,38 +78,7 @@ Compress them separately and you pay for that detail three times.
 
 ---
 
-## 3. Gamma: why the numbers are not proportional to light
-
-Human brightness perception is roughly logarithmic. We can see a step from 1 to 2 nits
-easily; a step from 501 to 502 nits is invisible. If code values were proportional to
-light, we would waste most of them in the highlights, where the eye cannot tell them apart,
-and starve the shadows, where it can. So code values are stored **non-linearly**.
-
-![SDR, HLG and PQ transfer functions compared](./images/cs-transfer-functions.svg)
-
-The convention is a prime mark: `R'G'B'` and `Y'` are gamma-encoded, `RGB` and `Y` are
-linear light. Nearly every video file you will touch is primed. It matters more than it
-looks:
-
-- **sRGB / BT.1886 (SDR)** — roughly a 2.2 to 2.4 power law over about 100 nits.
-- **PQ / SMPTE ST 2084 (HDR)** — *absolute*. Code 0.58 means about 100 cd/m² on any
-  display that claims PQ, up to a 10 000 cd/m² ceiling. Great for mastering, unforgiving
-  if the display cannot reach the levels in the signal.
-- **HLG / ARIB STD-B67 (HDR)** — *relative*, and the lower half of the curve is a plain
-  square root, so an SDR display showing an HLG signal produces something reasonable.
-  Designed for live broadcast, where you cannot ask every viewer to upgrade.
-
-:::warning The rule people break most often
-Resizing, blurring, alpha compositing and cross-fading are all **weighted averages of
-light**. Doing them on gamma-encoded values averages the wrong quantity: fades go muddy in
-the middle, downscaled bright detail turns grey, and antialiased edges pick up dark halos.
-Convert to linear light, do the arithmetic, convert back. In `ffmpeg` the relevant
-incantation is `zscale=t=linear` before the filter and `zscale=t=bt709` after it.
-:::
-
----
-
-## 4. Y'CbCr: separating brightness from color
+## 3. Y'CbCr: separating brightness from color
 
 Split the picture into one brightness channel and two color-difference channels. The
 brightness channel carries almost all the structure; the color-difference channels are
@@ -324,7 +293,7 @@ Everyone says "YUV". Everyone means Y'CbCr. Be precise in specs, relaxed in conv
 
 ---
 
-## 5. Limited range vs full range
+## 4. Limited range vs full range
 
 8-bit video does not use 0 to 255. It uses **16 to 235** for luma and **16 to 240** for
 chroma, leaving footroom and headroom for filter overshoot and legacy analogue levels.
@@ -346,7 +315,7 @@ The fix is never to hope. Convert explicitly with
 
 ---
 
-## 6. Chroma subsampling
+## 5. Chroma subsampling
 
 Because chroma is smooth and the eye is bad at it, you can sample it less often than luma.
 The notation is `J:a:b`, describing a reference block `J` pixels wide and 2 tall: `a` is the
@@ -386,7 +355,7 @@ set input and output chroma location.
 
 ---
 
-## 7. Pixel formats: how the bytes actually sit
+## 6. Pixel formats: how the bytes actually sit
 
 Sampling ratio says how much color you keep. **Pixel format** says how those samples are
 arranged in memory — and that is a separate decision that hardware cares about intensely.
@@ -413,7 +382,7 @@ plane alone without a stride dance.
 
 ---
 
-## 8. Wide gamut and HDR
+## 7. Wide gamut and HDR
 
 ### Gamut is about the primaries
 
@@ -461,7 +430,7 @@ is rarely used end-to-end, but it is the right space for measuring HDR color err
 
 ---
 
-## 9. Other spaces you will meet
+## 8. Other spaces you will meet
 
 | Space | Shape | Good at | Bad at |
 |---|---|---|---|
@@ -476,7 +445,7 @@ is rarely used end-to-end, but it is the right space for measuring HDR color err
 
 ---
 
-## 10. Which space when
+## 9. Which space when
 
 ```mermaid
 flowchart TD
@@ -530,7 +499,7 @@ at scale, so:
 
 ---
 
-## 11. The chain, end to end
+## 10. The chain, end to end
 
 ```mermaid
 flowchart TB
@@ -554,7 +523,7 @@ hide the times it is wrong.
 
 ---
 
-## 12. Symptoms and causes
+## 11. Symptoms and causes
 
 | What you see | Almost certainly | Check |
 |---|---|---|
@@ -571,7 +540,7 @@ hide the times it is wrong.
 
 ---
 
-## 13. Try it yourself
+## 12. Try it yourself
 
 ### Inspect what you actually have
 
@@ -684,7 +653,7 @@ results is the entire argument for 4:2:0.
 
 ---
 
-## 14. Cheat sheet
+## 13. Cheat sheet
 
 | Question | Short answer |
 |---|---|
@@ -726,3 +695,94 @@ results is the entire argument for 4:2:0.
 13. Charles Poynton, *Digital Video and HD: Algorithms and Interfaces* — the standard reference, and the source of most of the "everyone gets this wrong" folklore that turns out to be true
 14. Keith Jack, *Video Demystified* — format-by-format detail
 15. Poynton, [Gamma FAQ](https://poynton.ca/GammaFAQ.html) and [Color FAQ](https://poynton.ca/ColorFAQ.html) — short, free, and worth reading twice
+
+---
+
+## Appendix: Gamma — why the numbers are not proportional to light
+
+Human brightness perception is roughly logarithmic. We can see a step from 1 to 2 nits
+easily; a step from 501 to 502 nits is invisible. If code values were proportional to
+light, we would waste most of them in the highlights, where the eye cannot tell them apart,
+and starve the shadows, where it can. So code values are stored **non-linearly**.
+
+![SDR, HLG and PQ transfer functions compared](./images/cs-transfer-functions.svg)
+
+### How to read this graph
+
+The trick is the **vertical axis: it is logarithmic**. Each gridline is ten times the one
+below it. On a log axis, equal vertical distances mean equal *ratios*, not equal amounts, so
+the **slope of a curve tells you the percentage change in light for one code step**. Steep
+means one step multiplies the light a lot; flat means one step barely changes it.
+
+That is the right way to look at it, because the eye works in ratios too (Weber's law):
+over most of the range a step is visible once it changes the light by about 1%, whether
+you start at 1 nit or at 100 nits. So the question to ask of each curve is: *how many
+percent does one code step move the light, and is that above or below ~1%?*
+
+Here is that number for 8-bit code values:
+
+| Step | Linear light | SDR (2.4 power) | HLG | PQ |
+|---|---|---|---|---|
+| 1 → 2 | +100% | +428% | +428% | +242% |
+| 16 → 17 | +6.3% | +16% | +16% | +16% |
+| 64 → 65 | +1.6% | +3.8% | +3.8% | +5.6% |
+| 128 → 129 | +0.8% | +1.9% | +1.9% | +4.0% |
+| 254 → 255 | +0.4% | +0.95% | +2.6% | +3.8% |
+
+**Why every curve is steep at the left.** Near code 0 the light is close to nothing, so
+even a tiny absolute increase is a huge ratio: going from 0.0002 to 0.0009 nits is ×5. The
+curves *must* dive there, because a curve that is straight on a log axis can never reach
+zero light — black has to be bolted on somewhere, and the bottom few codes are where it
+happens. This is affordable because those levels sit below the display's own black level,
+screen reflections and camera noise; nobody can see the difference between 0.0002 and
+0.0009 nits in a living room. The eye is also less ratio-sensitive in near-darkness than
+Weber's law suggests, so big percentage steps there cost less than they appear to.
+
+**What the straighter part means.** Where a curve runs as a straight line on this plot, every
+code step is the *same* percentage change in light — so every step is roughly equally
+visible, and no codes are wasted on steps nobody can see or starved where banding appears.
+That is the ideal shape for spending a fixed number of codes. Look at the table again:
+
+- **PQ** is almost perfectly straight from about 0.1 nits all the way to 10 000 — a constant
+  ~4% per 8-bit step, which becomes ~1% per step at 10 bits. That is exactly why PQ is
+  always carried at 10 bits or more: the curve spreads the codes evenly, but 256 of them
+  over five decades is too coarse.
+- **HLG**'s upper half is literally a logarithm, so on this plot it is a straight line. Its
+  lower half is a square root, which curves like SDR — that is the part an SDR display can
+  show sensibly.
+- **SDR gamma** keeps bending: ~4% per step in the shadows, ~1% at the top. It does not
+  need to be straight because it only covers about 100 nits (roughly three to four
+  decades), and at 8 bits that already lands close to the 1% threshold in the range that matters.
+
+**What if the curve were linear?** There are two ways to read "linear", and the graph shows
+both:
+
+- *A straight line on this log plot* would be pure logarithmic encoding: constant
+  percentage per step everywhere. Perceptually ideal, which is why PQ and HLG approximate
+  it, but it cannot represent true black, so real curves bend down at the bottom.
+- *Code proportional to light* (the "Linear light" reference curve — straight on ordinary
+  axes, curved on this one) is the worst of both worlds. Look at its column: +6% per step at
+  code 16 means visible banding in shadows and skies, while +0.4% per step at the top means
+  more than half of all 256 codes are spent on highlight steps too small to see. To make
+  linear light band-free you need roughly 12–14 bits per channel, which is why linear
+  encoding is used for processing (float EXR, GPU shaders) and not for delivery.
+
+The convention is a prime mark: `R'G'B'` and `Y'` are gamma-encoded, `RGB` and `Y` are
+linear light. Nearly every video file you will touch is primed. It matters more than it
+looks:
+
+- **sRGB / BT.1886 (SDR)** — roughly a 2.2 to 2.4 power law over about 100 nits.
+- **PQ / SMPTE ST 2084 (HDR)** — *absolute*. Code 0.58 means about 100 cd/m² on any
+  display that claims PQ, up to a 10 000 cd/m² ceiling. Great for mastering, unforgiving
+  if the display cannot reach the levels in the signal.
+- **HLG / ARIB STD-B67 (HDR)** — *relative*, and the lower half of the curve is a plain
+  square root, so an SDR display showing an HLG signal produces something reasonable.
+  Designed for live broadcast, where you cannot ask every viewer to upgrade.
+
+:::warning The rule people break most often
+Resizing, blurring, alpha compositing and cross-fading are all **weighted averages of
+light**. Doing them on gamma-encoded values averages the wrong quantity: fades go muddy in
+the middle, downscaled bright detail turns grey, and antialiased edges pick up dark halos.
+Convert to linear light, do the arithmetic, convert back. In `ffmpeg` the relevant
+incantation is `zscale=t=linear` before the filter and `zscale=t=bt709` after it.
+:::
