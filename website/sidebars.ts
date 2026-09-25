@@ -20,6 +20,7 @@ const sidebars: SidebarsConfig = {
         'basics/goals',
         'basics/introduction_to_multimedia',
         'basics/color_space',
+        'basics/color_space_advanced',
         'basics/ffmpeg_commands',
         'basics/ntsc_pal_stories',
         'basics/assignments',
