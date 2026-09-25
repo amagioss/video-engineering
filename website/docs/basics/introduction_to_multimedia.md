@@ -39,6 +39,55 @@ Images are played on screen at FPS that gives the illusion of motion.
 Representation in python: Numpy array of shape **(n, width, height, 3)** where n is the number of frames stacked. Each number in the array is a 
 uint8 with values between 0 and 255.
 
+### Interlaced Video
+
+In **progressive** video (the "p" in 1080p), each frame contains every line of the picture. In **interlaced** video (the "i" in 1080i or 576i), each frame is split into two **fields**:
+
+- **Top field**: the odd lines (1, 3, 5, ...)
+- **Bottom field**: the even lines (2, 4, 6, ...)
+
+The two fields are captured at different instants and shown one after the other, so 1080i at 25 frames per second actually delivers 50 fields per second. This doubles the motion rate without increasing bandwidth, which is why analog TV standards (PAL, NTSC) and many broadcast formats use it.
+
+Interlacing was invented to get high refresh-rate motion and low flicker without paying the bandwidth cost of full high-frame-rate progressive video.
+
+Key Concepts:
+
+- **Field order**: Which field comes first, top field first (TFF) or bottom field first (BFF). Getting it wrong makes motion judder.
+- **Combing artifacts**: On a progressive display, the two fields of a moving object don't line up, producing a comb-like pattern along edges.
+- **Deinterlacing**: Converting interlaced video to progressive, for example with FFmpeg's `yadif` or `bwdif` filters:
+
+```bash
+ffmpeg -i interlaced.mpg -vf bwdif output.mp4
+```
+
+Example interlaced MPEG-2 clips: [samples.ffmpeg.org/MPEG2/interlaced](https://samples.ffmpeg.org/MPEG2/interlaced/). Use `ffprobe` to see the field order, and pause on a scene with motion to see the combing.
+
+### Aspect Ratio
+
+The **aspect ratio** is the ratio of a picture's width to its height. A 1920x1080 frame is 1920 / 1080 = 16:9.
+
+![Common video aspect ratios](./images/ar-common.svg)
+
+When the video's aspect ratio doesn't match the screen, the player has three choices:
+
+![Showing 4:3 video on a 16:9 screen](./images/ar-mismatch.svg)
+
+- **Letterbox / pillarbox**: Add black bars on the top and bottom (letterbox) or on the left and right (pillarbox). The whole picture is shown with the right shape.
+- **Stretch**: Fill the screen by scaling width and height by different amounts. Everything is distorted, so circles become ovals.
+- **Crop**: Zoom in until the screen is full. The shape is right, but the edges of the picture are cut off.
+
+Pixels are not always square. There are three ratios to keep apart:
+
+- **SAR (Storage Aspect Ratio)**: Width : height in pixels, e.g. 720x576 → 5:4.
+- **PAR (Pixel Aspect Ratio)**: Shape of each pixel. 1:1 for square pixels.
+- **DAR (Display Aspect Ratio)**: Shape of the picture on screen. **DAR = SAR × PAR**.
+
+For example, a PAL DVD stores 720x576 pixels but shows them as 16:9 by using wide pixels (PAR 64:45). If a player ignores the PAR, the circle is drawn squashed. FFmpeg reports these values as `SAR` (which FFmpeg uses for the pixel aspect ratio) and `DAR`:
+
+```bash
+ffprobe -v error -select_streams v:0 -show_entries stream=width,height,sample_aspect_ratio,display_aspect_ratio input.mp4
+```
+
 ### Audio
 
 Key Concepts:
